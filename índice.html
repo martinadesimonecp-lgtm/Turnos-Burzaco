@@ -1,0 +1,1300 @@
+<title>Cobertura de Turnos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --surface-page:   #f9f9f7;
+    --surface-card:   #fcfcfb;
+    --surface-sunken: #f3f2ee;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --border:         rgba(11,11,11,0.10);
+    --border-strong:  rgba(11,11,11,0.18);
+
+    --role-1: #2a78d6; /* Encargado - blue   */
+    --role-2: #eb6834; /* Clark     - orange */
+    --role-3: #1baf7a; /* Preparador- aqua   */
+    --role-4: #eda100; /* yellow */
+    --role-5: #e87ba4; /* magenta */
+    --role-6: #4a3aa7; /* violet */
+
+    --status-critical: #d03b3b;
+    --status-critical-bg: #fbe7e6;
+    --status-good:     #006300;
+    --status-good-bg:  #e4f3e1;
+    --status-warning:  #a06400;
+    --status-warning-bg: #fdf1d8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-page:   #0d0d0d;
+      --surface-card:   #1a1a19;
+      --surface-sunken: #212120;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8f8d86;
+      --gridline:       #2c2c2a;
+      --border:         rgba(255,255,255,0.10);
+      --border-strong:  rgba(255,255,255,0.20);
+
+      --role-1: #3987e5;
+      --role-2: #d95926;
+      --role-3: #199e70;
+      --role-4: #c98500;
+      --role-5: #d55181;
+      --role-6: #9085e9;
+
+      --status-critical: #e66767;
+      --status-critical-bg: #3a1f1e;
+      --status-good:     #4ad24a;
+      --status-good-bg:  #16281a;
+      --status-warning:  #e0ab3d;
+      --status-warning-bg: #332a14;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-page:   #0d0d0d;
+    --surface-card:   #1a1a19;
+    --surface-sunken: #212120;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8f8d86;
+    --gridline:       #2c2c2a;
+    --border:         rgba(255,255,255,0.10);
+    --border-strong:  rgba(255,255,255,0.20);
+
+    --role-1: #3987e5;
+    --role-2: #d95926;
+    --role-3: #199e70;
+    --role-4: #c98500;
+    --role-5: #d55181;
+    --role-6: #9085e9;
+
+    --status-critical: #e66767;
+    --status-critical-bg: #3a1f1e;
+    --status-good:     #4ad24a;
+    --status-good-bg:  #16281a;
+    --status-warning:  #e0ab3d;
+    --status-warning-bg: #332a14;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--surface-page);
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  h1 {
+    margin: 0;
+    font-family: "Manrope", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(24px, 3.4vw, 32px);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .header-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .date-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+  }
+  .date-field label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .date-field input[type="date"],
+  .date-field select {
+    font: inherit;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: var(--surface-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  .date-field .hint {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ---- KPI stats ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .stat {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat .stat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .stat .stat-value {
+    font-family: "Manrope", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat.stat-critical .stat-value { color: var(--status-critical); }
+  .stat.stat-good .stat-value { color: var(--status-good); }
+
+  /* ---- cards ---- */
+  .card {
+    background: var(--surface-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-head h2 {
+    margin: 0;
+    font-family: "Manrope", system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.005em;
+  }
+  .card-head .sub {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    margin-top: -8px;
+  }
+
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+  .btn {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 7px 12px;
+    transition: background .12s ease;
+  }
+  .btn:hover { background: var(--gridline); }
+
+  /* ---- legend ---- */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+  .swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .legend-item.gap .swatch {
+    background: var(--status-critical-bg);
+    border: 1.5px solid var(--status-critical);
+  }
+
+  /* ---- roster table ---- */
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 8px 8px;
+    border-bottom: 1px solid var(--gridline);
+  }
+  tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--gridline);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  .cell-role { display: flex; align-items: center; gap: 8px; }
+  .role-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  input.field {
+    font: inherit;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    padding: 4px 2px;
+    width: 100%;
+    border-radius: 4px;
+  }
+  input.field:hover { background: var(--surface-sunken); }
+  input.field:focus {
+    outline: none;
+    background: var(--surface-sunken);
+    border-bottom: 1px solid var(--role-1);
+  }
+  input[type="time"].field { width: 96px; }
+  .row-del {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
+  .row-del:hover { color: var(--status-critical); background: var(--status-critical-bg); }
+
+  /* ---- gantt timeline ---- */
+  .scroll-x { overflow-x: auto; }
+  .gantt-inner { min-width: 760px; }
+  .gantt-axis {
+    display: grid;
+    grid-template-columns: 152px 1fr;
+    margin-bottom: 4px;
+  }
+  .gantt-axis .hours {
+    position: relative;
+    height: 16px;
+  }
+  .gantt-axis .hours span {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    font-size: 10.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 152px 1fr;
+    align-items: center;
+    height: 32px;
+  }
+  .gantt-row + .gantt-row { border-top: 1px solid var(--gridline); }
+  .gantt-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding-right: 10px;
+    overflow: hidden;
+  }
+  .gantt-label .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .gantt-label .role-dot { flex: none; }
+  .gantt-track {
+    position: relative;
+    height: 20px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--gridline), var(--gridline) 1px,
+      transparent 1px, transparent calc(100% / 24)
+    );
+  }
+  .gantt-bar {
+    position: absolute;
+    top: 2px;
+    height: 16px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  }
+
+  /* ---- coverage heatmap ---- */
+  .heatmap-inner { min-width: 900px; }
+  .heat-row {
+    display: grid;
+    grid-template-columns: 132px repeat(24, 1fr);
+    align-items: center;
+  }
+  .heat-row.total {
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-strong);
+    font-weight: 700;
+  }
+  .heat-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    padding-right: 8px;
+  }
+  .heat-hourlabels {
+    display: grid;
+    grid-template-columns: 132px repeat(24, 1fr);
+    margin-bottom: 4px;
+  }
+  .heat-hourlabels span {
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .heat-cell {
+    margin: 2px;
+    height: 26px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+  .heat-cell.zero {
+    background: var(--status-critical-bg);
+    color: var(--status-critical);
+    box-shadow: inset 0 0 0 1px var(--status-critical);
+  }
+  .heat-cell.total-zero {
+    background: var(--status-critical);
+    color: #fff;
+  }
+
+  /* ---- alerts ---- */
+  .alerts { display: flex; flex-direction: column; gap: 8px; }
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 13px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--status-critical);
+    background: var(--status-critical-bg);
+    color: var(--text-primary);
+  }
+  .alert .icon { flex: none; }
+  .alert.ok {
+    border-left-color: var(--status-good);
+    background: var(--status-good-bg);
+  }
+  .alert b { font-weight: 700; }
+
+  /* ---- google sheets sync ---- */
+  .sheets-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .sheets-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .field-box {
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-primary);
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 8px 10px;
+    width: 100%;
+  }
+  .field-box:focus { outline: 2px solid var(--role-1); outline-offset: 1px; }
+  .sheets-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sheets-status {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    min-height: 16px;
+    margin: 0;
+  }
+  .sheets-status.error { color: var(--status-critical); }
+  .sheets-status.ok { color: var(--status-good); }
+  .history-list { display: flex; flex-direction: column; gap: 6px; }
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-sunken);
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .history-item:hover { border-color: var(--border-strong); }
+  .history-item .hdate { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .history-item .hcount { color: var(--text-muted); font-size: 12px; }
+  .history-empty { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+
+  .reset-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .reset-btn {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 11px;
+  }
+  .reset-btn:hover { color: var(--status-critical); border-color: var(--status-critical); }
+
+  .tooltip {
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+    background: var(--text-primary);
+    color: var(--surface-card);
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 6px 9px;
+    border-radius: 7px;
+    max-width: 220px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  }
+  .tooltip[hidden] { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="page">
+  <header>
+    <div class="titles">
+      <p class="eyebrow">Planificador de turnos</p>
+      <h1>Cobertura de personal</h1>
+    </div>
+    <div class="header-fields">
+      <div class="date-field">
+        <label for="shiftDate">Turno del día</label>
+        <input type="date" id="shiftDate" value="2026-08-21">
+      </div>
+      <div class="date-field">
+        <label for="dayStartHour">El día operativo arranca a las</label>
+        <select id="dayStartHour">
+          <option value="0">00:00</option>
+          <option value="1">01:00</option>
+          <option value="2">02:00</option>
+          <option value="3" selected>03:00</option>
+          <option value="4">04:00</option>
+          <option value="5">05:00</option>
+          <option value="6">06:00</option>
+          <option value="7">07:00</option>
+          <option value="8">08:00</option>
+          <option value="9">09:00</option>
+          <option value="10">10:00</option>
+          <option value="11">11:00</option>
+          <option value="12">12:00</option>
+          <option value="13">13:00</option>
+          <option value="14">14:00</option>
+          <option value="15">15:00</option>
+          <option value="16">16:00</option>
+          <option value="17">17:00</option>
+          <option value="18">18:00</option>
+          <option value="19">19:00</option>
+          <option value="20">20:00</option>
+          <option value="21">21:00</option>
+          <option value="22">22:00</option>
+          <option value="23">23:00</option>
+        </select>
+        <span class="hint">Hasta las <span id="dayEndLabel">02:59</span> del día siguiente</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Personal y horarios</h2>
+      <button class="btn" id="addRow">+ Agregar persona</button>
+    </div>
+    <p class="sub">Tocá cualquier celda para editarla. El puesto define el color en los gráficos de abajo.</p>
+    <div class="table-wrap">
+      <table id="rosterTable">
+        <thead>
+          <tr><th style="width:26%">Puesto</th><th style="width:26%">Persona</th><th>Entrada</th><th>Salida</th><th></th></tr>
+        </thead>
+        <tbody id="rosterBody"></tbody>
+      </table>
+    </div>
+    <datalist id="roleOptions"></datalist>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Historial en Google Sheets</h2></div>
+    <p class="sub">Guardá el turno que armaste en tu propia planilla de Google y volvé a cargar cualquier día anterior para reusarlo o compararlo.</p>
+    <div class="sheets-form">
+      <label for="sheetsUrl">URL de tu Web App
+        <input type="url" id="sheetsUrl" class="field-box" value="https://script.google.com/macros/s/AKfycbzYkT2In-NDDw-iphS0Z7Z0fcBobLMk-dajBycHCbHmK_t4f4pOmnhyKP4oBmUXPa7O/exec" placeholder="https://script.google.com/macros/s/AKfycb.../exec" autocomplete="off">
+      </label>
+    </div>
+    <div class="sheets-actions">
+      <button class="btn" id="sheetsSave">Guardar este turno en Sheets</button>
+      <button class="btn" id="sheetsRefreshHistory">Ver historial</button>
+    </div>
+    <p class="sheets-status" id="sheetsStatus"></p>
+    <div id="historyList" class="history-list"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Línea de tiempo</h2></div>
+    <p class="sub">Cada barra es un turno. El eje arranca en el inicio del día operativo definido arriba; las barras cortadas al borde continúan del otro lado.</p>
+    <div class="scroll-x">
+      <div class="gantt-inner">
+        <div class="gantt-axis">
+          <div></div>
+          <div class="hours" id="ganttHours"></div>
+        </div>
+        <div id="gantt"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Cobertura por hora</h2></div>
+    <p class="sub">Cantidad de personas trabajando en cada puesto, hora por hora. En rojo, las horas sin nadie cubriendo ese puesto.</p>
+    <div class="scroll-x">
+      <div class="heatmap-inner" id="heatmap"></div>
+    </div>
+    <div class="alerts" id="alerts"></div>
+  </section>
+
+  <div class="reset-row">
+    <button class="reset-btn" id="resetData">Restablecer datos de ejemplo</button>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip" hidden></div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'turnos-cobertura-v2';
+  var ROLE_VARS = ['--role-1','--role-2','--role-3','--role-4','--role-5','--role-6'];
+
+  var SEED = [
+    { role: 'Encargado',  person: 'Claudio',      start: '17:00', end: '05:00' },
+    { role: 'Clark',      person: 'Pampa',        start: '17:00', end: '05:00' },
+    { role: 'Encargado',  person: 'Marcos',       start: '03:00', end: '15:00' },
+    { role: 'Clark',      person: 'Perro',        start: '03:00', end: '15:00' },
+    { role: 'Clark',      person: 'Cristian',     start: '05:00', end: '17:00' },
+    { role: 'Clark',      person: 'Charly',       start: '07:00', end: '19:00' },
+    { role: 'Preparador', person: 'Mati',         start: '08:00', end: '18:00' },
+    { role: 'Preparador', person: 'Pola',         start: '08:00', end: '18:00' },
+    { role: 'Encargado',  person: 'Agustin',      start: '13:00', end: '01:00' },
+    { role: 'Clark',      person: 'Mauro',        start: '13:00', end: '01:00' },
+    { role: 'Clark',      person: 'Ale',          start: '15:00', end: '03:00' },
+    { role: 'Preparador', person: 'Ariel',        start: '18:00', end: '06:00' },
+    { role: 'Preparador', person: 'Amigo Ariel',  start: '18:00', end: '06:00' }
+  ];
+
+  var rosterBody = document.getElementById('rosterBody');
+  var roleOptions = document.getElementById('roleOptions');
+  var legend = document.getElementById('legend');
+  var statsEl = document.getElementById('stats');
+  var ganttHours = document.getElementById('ganttHours');
+  var gantt = document.getElementById('gantt');
+  var heatmap = document.getElementById('heatmap');
+  var alertsEl = document.getElementById('alerts');
+  var tooltip = document.getElementById('tooltip');
+  var shiftDate = document.getElementById('shiftDate');
+  var dayStartSelect = document.getElementById('dayStartHour');
+  var dayEndLabel = document.getElementById('dayEndLabel');
+  var sheetsUrlInput = document.getElementById('sheetsUrl');
+  var sheetsStatus = document.getElementById('sheetsStatus');
+  var sheetsSaveBtn = document.getElementById('sheetsSave');
+  var sheetsRefreshBtn = document.getElementById('sheetsRefreshHistory');
+  var historyList = document.getElementById('historyList');
+  var SHEETS_CONFIG_KEY = 'turnos-sheets-config-v1';
+
+  var roleColorMap = {}; // role name -> css var
+  var roleFirstSeen = [];
+
+  function getDayStartHour() {
+    return parseInt(dayStartSelect.value, 10) || 0;
+  }
+
+  function loadRows() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed.rows) && parsed.rows.length) {
+          if (parsed.date) shiftDate.value = parsed.date;
+          if (parsed.dayStart !== undefined && parsed.dayStart !== null) dayStartSelect.value = parsed.dayStart;
+          return parsed.rows;
+        }
+      }
+    } catch (e) {}
+    return SEED.slice();
+  }
+
+  function saveRows() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: shiftDate.value, dayStart: dayStartSelect.value, rows: readRowsFromDOM() }));
+    } catch (e) {}
+  }
+
+  function readRowsFromDOM() {
+    var rows = [];
+    rosterBody.querySelectorAll('tr').forEach(function (tr) {
+      rows.push({
+        role: tr.querySelector('.f-role').value.trim() || 'Sin puesto',
+        person: tr.querySelector('.f-person').value.trim() || 'Sin nombre',
+        start: tr.querySelector('.f-start').value || '00:00',
+        end: tr.querySelector('.f-end').value || '00:00'
+      });
+    });
+    return rows;
+  }
+
+  function colorForRole(role) {
+    if (!roleColorMap[role]) {
+      var idx = roleFirstSeen.length % ROLE_VARS.length;
+      roleColorMap[role] = ROLE_VARS[idx];
+      roleFirstSeen.push(role);
+    }
+    return roleColorMap[role];
+  }
+
+  function buildRow(data) {
+    var tr = document.createElement('tr');
+
+    var tdRole = document.createElement('td');
+    var roleWrap = document.createElement('div');
+    roleWrap.className = 'cell-role';
+    var dot = document.createElement('span');
+    dot.className = 'role-dot';
+    var roleInput = document.createElement('input');
+    roleInput.className = 'field f-role';
+    roleInput.setAttribute('list', 'roleOptions');
+    roleInput.setAttribute('aria-label', 'Puesto');
+    roleInput.value = data.role;
+    roleWrap.appendChild(dot);
+    roleWrap.appendChild(roleInput);
+    tdRole.appendChild(roleWrap);
+
+    var tdPerson = document.createElement('td');
+    var personInput = document.createElement('input');
+    personInput.className = 'field f-person';
+    personInput.setAttribute('aria-label', 'Persona');
+    personInput.value = data.person;
+    tdPerson.appendChild(personInput);
+
+    var tdStart = document.createElement('td');
+    var startInput = document.createElement('input');
+    startInput.type = 'time';
+    startInput.className = 'field f-start';
+    startInput.setAttribute('aria-label', 'Entrada');
+    startInput.value = data.start;
+    tdStart.appendChild(startInput);
+
+    var tdEnd = document.createElement('td');
+    var endInput = document.createElement('input');
+    endInput.type = 'time';
+    endInput.className = 'field f-end';
+    endInput.setAttribute('aria-label', 'Salida');
+    endInput.value = data.end;
+    tdEnd.appendChild(endInput);
+
+    var tdDel = document.createElement('td');
+    var delBtn = document.createElement('button');
+    delBtn.className = 'row-del';
+    delBtn.title = 'Eliminar persona';
+    delBtn.innerHTML = '&#10005;';
+    delBtn.addEventListener('click', function () {
+      tr.remove();
+      renderAll();
+    });
+    tdDel.appendChild(delBtn);
+
+    tr.appendChild(tdRole);
+    tr.appendChild(tdPerson);
+    tr.appendChild(tdStart);
+    tr.appendChild(tdEnd);
+    tr.appendChild(tdDel);
+
+    tr._dot = dot;
+
+    [roleInput, personInput, startInput, endInput].forEach(function (el) {
+      el.addEventListener('input', renderAll);
+    });
+
+    rosterBody.appendChild(tr);
+  }
+
+  function minutesOf(hhmm) {
+    var parts = (hhmm || '00:00').split(':');
+    var h = parseInt(parts[0], 10) || 0;
+    var m = parseInt(parts[1], 10) || 0;
+    return h * 60 + m;
+  }
+
+  function fmtHour(h) {
+    return (h < 10 ? '0' : '') + h + ':00';
+  }
+
+  function showTooltip(evt, html) {
+    tooltip.innerHTML = html;
+    tooltip.hidden = false;
+    var x = evt.clientX + 14;
+    var y = evt.clientY + 14;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+  function hideTooltip() { tooltip.hidden = true; }
+
+  function renderAll() {
+    roleColorMap = {};
+    roleFirstSeen = [];
+
+    var dayStartHour = getDayStartHour();
+    var dayStartMin = dayStartHour * 60;
+    dayEndLabel.textContent = fmtHour((dayStartHour + 23) % 24).slice(0, 3) + '59';
+
+    var rows = readRowsFromDOM().map(function (r) {
+      var start = minutesOf(r.start);
+      var endRaw = minutesOf(r.end);
+      var duration = endRaw - start;
+      if (duration <= 0) duration += 1440;
+      return {
+        role: r.role,
+        person: r.person,
+        start: start,
+        duration: duration,
+        end: (start + duration) % 1440,
+        displayStart: ((start - dayStartMin) % 1440 + 1440) % 1440
+      };
+    });
+
+    // assign colors in first-seen order, and role dots in the roster
+    rosterBody.querySelectorAll('tr').forEach(function (tr) {
+      var roleName = tr.querySelector('.f-role').value.trim() || 'Sin puesto';
+      var varName = colorForRole(roleName);
+      tr._dot.style.background = 'var(' + varName + ')';
+    });
+
+    renderRoleOptions();
+    renderLegend();
+    renderStats(rows, dayStartHour);
+    renderGantt(rows, dayStartHour);
+    var coverage = computeCoverage(rows, dayStartHour);
+    renderHeatmap(coverage, dayStartHour);
+    renderAlerts(coverage, dayStartHour);
+    saveRows();
+  }
+
+  function renderRoleOptions() {
+    roleOptions.innerHTML = '';
+    roleFirstSeen.forEach(function (role) {
+      var opt = document.createElement('option');
+      opt.value = role;
+      roleOptions.appendChild(opt);
+    });
+  }
+
+  function renderLegend() {
+    legend.innerHTML = '';
+    roleFirstSeen.forEach(function (role) {
+      var item = document.createElement('div');
+      item.className = 'legend-item';
+      var sw = document.createElement('span');
+      sw.className = 'swatch';
+      sw.style.background = 'var(' + roleColorMap[role] + ')';
+      item.appendChild(sw);
+      var label = document.createElement('span');
+      label.textContent = role;
+      item.appendChild(label);
+      legend.appendChild(item);
+    });
+    var gapItem = document.createElement('div');
+    gapItem.className = 'legend-item gap';
+    var gapSw = document.createElement('span');
+    gapSw.className = 'swatch';
+    gapItem.appendChild(gapSw);
+    var gapLabel = document.createElement('span');
+    gapLabel.textContent = 'Hueco de cobertura (0 personas)';
+    gapItem.appendChild(gapLabel);
+    legend.appendChild(gapItem);
+  }
+
+  function renderStats(rows, dayStartHour) {
+    var totalPersonHours = rows.reduce(function (sum, r) { return sum + r.duration / 60; }, 0);
+    var coverage = computeCoverage(rows, dayStartHour);
+    var gapHours = 0;
+    var totalZeroHours = 0;
+    Object.keys(coverage.byRole).forEach(function (role) {
+      coverage.byRole[role].forEach(function (c) { if (c === 0) gapHours++; });
+    });
+    coverage.total.forEach(function (c) { if (c === 0) totalZeroHours++; });
+
+    var avgCoverage = (coverage.total.reduce(function (a, b) { return a + b; }, 0) / 24);
+
+    statsEl.innerHTML = '';
+    var stats = [
+      { label: 'Personas en el roster', value: rows.length },
+      { label: 'Puestos distintos', value: roleFirstSeen.length },
+      { label: 'Horas-persona programadas', value: Math.round(totalPersonHours) },
+      { label: 'Promedio de personas / hora', value: avgCoverage.toFixed(1) },
+      { label: 'Huecos de cobertura', value: gapHours + (totalZeroHours ? ' (' + totalZeroHours + ' sin nadie)' : ''), critical: gapHours > 0, good: gapHours === 0 }
+    ];
+    stats.forEach(function (s) {
+      var tile = document.createElement('div');
+      tile.className = 'stat' + (s.critical ? ' stat-critical' : '') + (s.good ? ' stat-good' : '');
+      tile.innerHTML = '<span class="stat-label">' + s.label + '</span><span class="stat-value">' + s.value + '</span>';
+      statsEl.appendChild(tile);
+    });
+  }
+
+  function renderGantt(rows, dayStartHour) {
+    ganttHours.innerHTML = '';
+    for (var h = 0; h <= 24; h += 2) {
+      var span = document.createElement('span');
+      span.style.left = (h / 24 * 100) + '%';
+      span.textContent = fmtHour((dayStartHour + h) % 24);
+      ganttHours.appendChild(span);
+    }
+
+    var sorted = rows.slice().sort(function (a, b) {
+      var ra = roleFirstSeen.indexOf(a.role);
+      var rb = roleFirstSeen.indexOf(b.role);
+      if (ra !== rb) return ra - rb;
+      return a.displayStart - b.displayStart;
+    });
+
+    gantt.innerHTML = '';
+    sorted.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'gantt-row';
+
+      var label = document.createElement('div');
+      label.className = 'gantt-label';
+      var dot = document.createElement('span');
+      dot.className = 'role-dot';
+      dot.style.background = 'var(' + colorForRole(r.role) + ')';
+      var name = document.createElement('span');
+      name.className = 'name';
+      name.textContent = r.person;
+      label.appendChild(dot);
+      label.appendChild(name);
+      row.appendChild(label);
+
+      var track = document.createElement('div');
+      track.className = 'gantt-track';
+
+      var segments = [];
+      var endAbs = r.displayStart + r.duration;
+      if (endAbs <= 1440) {
+        segments.push([r.displayStart, endAbs]);
+      } else {
+        segments.push([r.displayStart, 1440]);
+        segments.push([0, endAbs - 1440]);
+      }
+
+      var tooltipHtml = '<b>' + r.person + '</b><br>' + r.role + '<br>' +
+        fmtHour(Math.floor(r.start / 60)).slice(0,2) + ':' + (r.start % 60 < 10 ? '0' : '') + (r.start % 60) +
+        ' – ' + fmtHour(Math.floor(r.end / 60)).slice(0,2) + ':' + (r.end % 60 < 10 ? '0' : '') + (r.end % 60);
+
+      segments.forEach(function (seg) {
+        var bar = document.createElement('div');
+        bar.className = 'gantt-bar';
+        bar.style.left = (seg[0] / 1440 * 100) + '%';
+        bar.style.width = ((seg[1] - seg[0]) / 1440 * 100) + '%';
+        bar.style.background = 'var(' + colorForRole(r.role) + ')';
+        bar.addEventListener('mousemove', function (evt) { showTooltip(evt, tooltipHtml); });
+        bar.addEventListener('mouseleave', hideTooltip);
+        track.appendChild(bar);
+      });
+
+      row.appendChild(track);
+      gantt.appendChild(row);
+    });
+  }
+
+  function computeCoverage(rows, dayStartHour) {
+    var byRole = {};
+    roleFirstSeen.forEach(function (role) { byRole[role] = new Array(24).fill(0); });
+    var total = new Array(24).fill(0);
+    var namesByRoleHour = {};
+
+    // d = column index (0 = the day-start hour); actualHour = real clock hour for that column
+    rows.forEach(function (r) {
+      for (var d = 0; d < 24; d++) {
+        var actualHour = (dayStartHour + d) % 24;
+        var hourStart = actualHour * 60;
+        var offset = (hourStart - r.start + 1440) % 1440;
+        if (offset < r.duration) {
+          byRole[r.role][d]++;
+          total[d]++;
+          var key = r.role + '|' + d;
+          if (!namesByRoleHour[key]) namesByRoleHour[key] = [];
+          namesByRoleHour[key].push(r.person);
+        }
+      }
+    });
+
+    return { byRole: byRole, total: total, names: namesByRoleHour };
+  }
+
+  function renderHeatmap(coverage, dayStartHour) {
+    heatmap.innerHTML = '';
+
+    var hourLabels = document.createElement('div');
+    hourLabels.className = 'heat-hourlabels';
+    hourLabels.appendChild(document.createElement('span'));
+    for (var h = 0; h < 24; h++) {
+      var s = document.createElement('span');
+      var actualHour = (dayStartHour + h) % 24;
+      s.textContent = (actualHour < 10 ? '0' : '') + actualHour;
+      hourLabels.appendChild(s);
+    }
+    heatmap.appendChild(hourLabels);
+
+    roleFirstSeen.forEach(function (role) {
+      var row = document.createElement('div');
+      row.className = 'heat-row';
+      var label = document.createElement('div');
+      label.className = 'heat-label';
+      var dot = document.createElement('span');
+      dot.className = 'role-dot';
+      dot.style.background = 'var(' + roleColorMap[role] + ')';
+      var text = document.createElement('span');
+      text.textContent = role;
+      label.appendChild(dot);
+      label.appendChild(text);
+      row.appendChild(label);
+
+      coverage.byRole[role].forEach(function (count, h) {
+        var cell = document.createElement('div');
+        cell.className = 'heat-cell' + (count === 0 ? ' zero' : '');
+        cell.textContent = count;
+        if (count > 0) {
+          var maxShade = 4;
+          var t = Math.min(count, maxShade) / maxShade;
+          cell.style.background = 'color-mix(in srgb, var(' + roleColorMap[role] + ') ' + Math.round(20 + t * 55) + '%, var(--surface-sunken))';
+          cell.style.color = t > 0.55 ? '#fff' : 'var(--text-primary)';
+        }
+        var names = coverage.names[role + '|' + h] || [];
+        var actualHour = (dayStartHour + h) % 24;
+        var tt = '<b>' + role + '</b> · ' + fmtHour(actualHour) + '–' + fmtHour((actualHour + 1) % 24) + '<br>' +
+          (names.length ? names.join(', ') : 'Sin nadie cubriendo este puesto');
+        cell.addEventListener('mousemove', function (evt) { showTooltip(evt, tt); });
+        cell.addEventListener('mouseleave', hideTooltip);
+        row.appendChild(cell);
+      });
+      heatmap.appendChild(row);
+    });
+
+    var totalRow = document.createElement('div');
+    totalRow.className = 'heat-row total';
+    var totalLabel = document.createElement('div');
+    totalLabel.className = 'heat-label';
+    totalLabel.textContent = 'Total';
+    totalRow.appendChild(totalLabel);
+    coverage.total.forEach(function (count, h) {
+      var cell = document.createElement('div');
+      cell.className = 'heat-cell' + (count === 0 ? ' total-zero' : '');
+      cell.textContent = count;
+      if (count > 0) {
+        var t = Math.min(count, 8) / 8;
+        cell.style.background = 'color-mix(in srgb, var(--role-1) ' + Math.round(15 + t * 55) + '%, var(--surface-sunken))';
+        cell.style.color = t > 0.5 ? '#fff' : 'var(--text-primary)';
+      }
+      var actualHour = (dayStartHour + h) % 24;
+      var tt = '<b>Total</b> · ' + fmtHour(actualHour) + '–' + fmtHour((actualHour + 1) % 24) + '<br>' + count + ' persona(s) trabajando';
+      cell.addEventListener('mousemove', function (evt) { showTooltip(evt, tt); });
+      cell.addEventListener('mouseleave', hideTooltip);
+      totalRow.appendChild(cell);
+    });
+    heatmap.appendChild(totalRow);
+  }
+
+  function groupGapHours(zeroFlags) {
+    // zeroFlags: boolean[24]. Returns array of [startHour, endHourExclusive], merging across midnight.
+    var runs = [];
+    var i = 0;
+    while (i < 24) {
+      if (zeroFlags[i]) {
+        var j = i;
+        while (j < 24 && zeroFlags[j]) j++;
+        runs.push([i, j]);
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    if (runs.length > 1 && runs[0][0] === 0 && runs[runs.length - 1][1] === 24) {
+      var first = runs.shift();
+      var last = runs.pop();
+      runs.push([last[0], first[1] + 24]);
+    }
+    return runs;
+  }
+
+  function fmtRangeHour(h, dayStartHour) {
+    var hh = (dayStartHour + h) % 24;
+    return (hh < 10 ? '0' : '') + hh + ':00';
+  }
+
+  function renderAlerts(coverage, dayStartHour) {
+    alertsEl.innerHTML = '';
+    var any = false;
+
+    var totalZero = coverage.total.map(function (c) { return c === 0; });
+    groupGapHours(totalZero).forEach(function (run) {
+      any = true;
+      var div = document.createElement('div');
+      div.className = 'alert';
+      div.innerHTML = '<span class="icon">&#9888;&#65039;</span><span><b>Sin nadie en el local</b> de ' + fmtRangeHour(run[0], dayStartHour) + ' a ' + fmtRangeHour(run[1], dayStartHour) + '.</span>';
+      alertsEl.appendChild(div);
+    });
+
+    roleFirstSeen.forEach(function (role) {
+      var zero = coverage.byRole[role].map(function (c) { return c === 0; });
+      groupGapHours(zero).forEach(function (run) {
+        any = true;
+        var div = document.createElement('div');
+        div.className = 'alert';
+        div.innerHTML = '<span class="icon">&#9888;&#65039;</span><span><b>' + role + '</b> sin cobertura de ' + fmtRangeHour(run[0], dayStartHour) + ' a ' + fmtRangeHour(run[1], dayStartHour) + '.</span>';
+        alertsEl.appendChild(div);
+      });
+    });
+
+    if (!any) {
+      var ok = document.createElement('div');
+      ok.className = 'alert ok';
+      ok.innerHTML = '<span class="icon">&#9989;</span><span>Cobertura completa las 24 horas, en todos los puestos.</span>';
+      alertsEl.appendChild(ok);
+    }
+  }
+
+  function loadSheetsConfig() {
+    try {
+      var raw = localStorage.getItem(SHEETS_CONFIG_KEY);
+      if (raw) {
+        var c = JSON.parse(raw);
+        sheetsUrlInput.value = c.url || '';
+      }
+    } catch (e) {}
+  }
+
+  function saveSheetsConfig() {
+    try {
+      localStorage.setItem(SHEETS_CONFIG_KEY, JSON.stringify({
+        url: sheetsUrlInput.value.trim()
+      }));
+    } catch (e) {}
+  }
+
+  function setSheetsStatus(text, kind) {
+    sheetsStatus.textContent = text;
+    sheetsStatus.className = 'sheets-status' + (kind ? ' ' + kind : '');
+  }
+
+  function sheetsSave() {
+    var url = sheetsUrlInput.value.trim();
+    if (!url) { setSheetsStatus('Pegá primero la URL de tu Web App.', 'error'); return; }
+
+    var payload = {
+      date: shiftDate.value,
+      dayStart: getDayStartHour(),
+      rows: readRowsFromDOM()
+    };
+
+    setSheetsStatus('Guardando…');
+    sheetsSaveBtn.disabled = true;
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.ok) {
+          setSheetsStatus('Guardado: ' + data.saved + ' turnos para el ' + payload.date + '.', 'ok');
+          refreshHistory();
+        } else {
+          setSheetsStatus('Error al guardar: ' + (data.error || 'respuesta inesperada') + '.', 'error');
+        }
+      })
+      .catch(function () {
+        setSheetsStatus('No se pudo conectar con Google Sheets. Revisá la URL y que la Web App esté publicada con acceso "Cualquier usuario".', 'error');
+      })
+      .finally(function () { sheetsSaveBtn.disabled = false; });
+  }
+
+  function refreshHistory() {
+    var url = sheetsUrlInput.value.trim();
+    if (!url) { historyList.innerHTML = '<p class="history-empty">Pegá la URL de tu Web App para ver el historial.</p>'; return; }
+
+    historyList.innerHTML = '<p class="history-empty">Cargando historial…</p>';
+
+    fetch(url + '?action=list')
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data.ok) {
+          historyList.innerHTML = '<p class="history-empty">Error: ' + (data.error || 'no se pudo leer el historial') + '.</p>';
+          return;
+        }
+        if (!data.dates || !data.dates.length) {
+          historyList.innerHTML = '<p class="history-empty">Todavía no guardaste ningún turno en Sheets.</p>';
+          return;
+        }
+        historyList.innerHTML = '';
+        data.dates.forEach(function (d) {
+          var item = document.createElement('div');
+          item.className = 'history-item';
+          item.innerHTML = '<span class="hdate">' + d.date + '</span><span class="hcount">' + d.count + ' turnos · tocá para cargar</span>';
+          item.addEventListener('click', function () { loadFromSheets(d.date); });
+          historyList.appendChild(item);
+        });
+      })
+      .catch(function () {
+        historyList.innerHTML = '<p class="history-empty">No se pudo conectar con Google Sheets.</p>';
+      });
+  }
+
+  function loadFromSheets(date) {
+    var url = sheetsUrlInput.value.trim();
+    if (!url) return;
+
+    setSheetsStatus('Cargando ' + date + '…');
+
+    fetch(url + '?action=load&date=' + encodeURIComponent(date))
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (!data.ok || !data.rows || !data.rows.length) {
+          setSheetsStatus('No encontré datos guardados para el ' + date + '.', 'error');
+          return;
+        }
+        rosterBody.innerHTML = '';
+        data.rows.forEach(buildRow);
+        shiftDate.value = date;
+        if (data.dayStart !== undefined && data.dayStart !== null && data.dayStart !== '') {
+          dayStartSelect.value = data.dayStart;
+        }
+        renderAll();
+        setSheetsStatus('Cargado el turno del ' + date + '.', 'ok');
+      })
+      .catch(function () {
+        setSheetsStatus('No se pudo conectar con Google Sheets.', 'error');
+      });
+  }
+
+  sheetsUrlInput.addEventListener('input', saveSheetsConfig);
+  sheetsSaveBtn.addEventListener('click', sheetsSave);
+  sheetsRefreshBtn.addEventListener('click', refreshHistory);
+  loadSheetsConfig();
+
+  document.getElementById('addRow').addEventListener('click', function () {
+    var lastRole = roleFirstSeen.length ? roleFirstSeen[roleFirstSeen.length - 1] : 'Encargado';
+    buildRow({ role: lastRole, person: '', start: '08:00', end: '16:00' });
+    renderAll();
+  });
+
+  var resetBtn = document.getElementById('resetData');
+  var resetArmed = false;
+  var resetTimer = null;
+  resetBtn.addEventListener('click', function () {
+    if (!resetArmed) {
+      resetArmed = true;
+      resetBtn.textContent = '¿Seguro? Tocá de nuevo para confirmar';
+      resetTimer = setTimeout(function () {
+        resetArmed = false;
+        resetBtn.textContent = 'Restablecer datos de ejemplo';
+      }, 3000);
+      return;
+    }
+    clearTimeout(resetTimer);
+    resetArmed = false;
+    resetBtn.textContent = 'Restablecer datos de ejemplo';
+    rosterBody.innerHTML = '';
+    SEED.forEach(buildRow);
+    shiftDate.value = '2026-08-21';
+    dayStartSelect.value = '3';
+    renderAll();
+  });
+
+  shiftDate.addEventListener('input', saveRows);
+  dayStartSelect.addEventListener('change', renderAll);
+
+  var initialRows = loadRows();
+  initialRows.forEach(buildRow);
+  renderAll();
+})();
+</script>
